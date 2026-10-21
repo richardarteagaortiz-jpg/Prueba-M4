@@ -20,6 +20,7 @@
   let resultCtx = null;
   let lastFocus = null;
   let modalOpen = false;
+  let pagos = null;          // { pagos, moneda, importes, webhook } cuando el servidor los ofrece
 
   /* ------------------------------- utilidades ------------------------------ */
 
@@ -910,6 +911,145 @@
     el.soundIcon.textContent = soundOn ? '🔊' : '🔇';
   }
 
+  /* ------------------------------ apoyo / pagos ----------------------------- */
+
+  /**
+   * Pregunta al servidor si las donaciones están configuradas.
+   * En hosting estático (sin backend) la petición falla y el botón queda oculto:
+   * el juego sigue siendo 100 % gratuito y funcional.
+   */
+  async function detectarPagos() {
+    try {
+      const control = new AbortController();
+      const temporizador = setTimeout(() => control.abort(), 2500);
+      const respuesta = await fetch('api/salud', {
+        headers: { Accept: 'application/json' },
+        signal: control.signal
+      });
+      clearTimeout(temporizador);
+      if (!respuesta.ok) return;
+      const datos = await respuesta.json();
+      if (!datos || !datos.pagos) return;
+      pagos = datos;
+      if (el.btnApoyar) {
+        el.btnApoyar.hidden = false;
+        if (el.supportNote) el.supportNote.hidden = false;
+      }
+    } catch (err) {
+      /* sin backend: modo gratuito, no hacemos nada */
+    }
+  }
+
+  function importesDisponibles() {
+    if (pagos && Array.isArray(pagos.importes) && pagos.importes.length) return pagos.importes;
+    return [5, 10, 25, 50];
+  }
+
+  function monedaLegible(moneda) {
+    const codigo = String(moneda || 'usd').toUpperCase();
+    const simbolo = { USD: 'US$', EUR: '€', MXN: 'MX$', COP: 'COL$', ARS: 'AR$' }[codigo];
+    return simbolo || codigo;
+  }
+
+  function abrirApoyo() {
+    if (!pagos) return;
+    const importes = importesDisponibles();
+    const seleccionado = importes[Math.min(1, importes.length - 1)];
+    openModal(`
+      <h2 id="modalTitle">💜 Apoyar CosmoMates</h2>
+      <p class="modal-sub">El juego es y seguirá siendo gratuito, sin anuncios y sin cuentas.</p>
+      <p class="support-intro">Si quieres ayudar a mantener los servidores y seguir creando planetas, puedes hacer una donación voluntaria. El pago se procesa en la pasarela segura de NowPayments: <b>no recibimos ni guardamos datos de tu tarjeta o monedero</b>.</p>
+      <div class="support-note-box">
+        <span aria-hidden="true">👩‍👦</span>
+        <span><b>Solo para personas adultas.</b> Si tienes menos de 18 años, pide permiso a un adulto. Puedes jugar todo el contenido sin donar nada.</span>
+      </div>
+      <fieldset class="field">
+        <legend class="field-label">Elige un importe (${monedaLegible(pagos.moneda)})</legend>
+        <div class="support-amounts" id="supportAmounts" role="radiogroup" aria-label="Importe de la donación">
+          ${importes.map((n, i) => `
+            <button type="button" class="support-amount" role="radio" aria-checked="${n === seleccionado}" aria-pressed="${n === seleccionado}"
+                    data-amount="${n}" data-testid="amount-${n}">${monedaLegible(pagos.moneda)} ${n}</button>`).join('')}
+        </div>
+      </fieldset>
+      <button type="button" class="btn btn-primary btn-block" id="btnPagar">
+        <span aria-hidden="true">🔒</span> Continuar al pago seguro
+      </button>
+      <p class="support-status is-info" id="supportStatus" role="status" aria-live="polite">Serás redirigido a NowPayments para completar el pago.</p>
+    `, (root) => {
+      let monto = seleccionado;
+      const estado = root.querySelector('#supportStatus');
+      const botones = Array.from(root.querySelectorAll('[data-amount]'));
+
+      botones.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          monto = Number(btn.getAttribute('data-amount'));
+          botones.forEach((b) => {
+            const activo = b === btn;
+            b.setAttribute('aria-pressed', activo ? 'true' : 'false');
+            b.setAttribute('aria-checked', activo ? 'true' : 'false');
+          });
+          Sound.click();
+        });
+      });
+
+      root.querySelector('#btnPagar').addEventListener('click', async (evento) => {
+        const boton = evento.currentTarget;
+        boton.disabled = true;
+        estado.className = 'support-status is-info';
+        estado.textContent = 'Creando el pago…';
+        try {
+          const respuesta = await fetch('api/donacion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ monto })
+          });
+          const datos = await respuesta.json().catch(() => ({}));
+          if (!respuesta.ok || !datos.url) {
+            throw new Error(datos.error || 'No se pudo crear el pago.');
+          }
+          estado.textContent = 'Redirigiendo a la pasarela…';
+          window.location.href = datos.url;
+        } catch (err) {
+          estado.className = 'support-status is-error';
+          estado.textContent = '⚠️ ' + (err.message || 'No se pudo crear el pago. Inténtalo más tarde.');
+          boton.disabled = false;
+        }
+      });
+    });
+  }
+
+  /** Mensajes de vuelta desde la pasarela (?apoyo=gracias | cancelado). */
+  function revisarRetornoDeApoyo() {
+    let parametros;
+    try {
+      parametros = new URLSearchParams(window.location.search);
+    } catch (err) {
+      return;
+    }
+    const apoyo = parametros.get('apoyo');
+    if (!apoyo) return;
+    if (apoyo === 'gracias') {
+      openModal(`
+        <div class="support-thanks">
+          <span class="support-heart" aria-hidden="true">💜</span>
+          <h2 id="modalTitle">¡Gracias por apoyar!</h2>
+          <p class="modal-sub">Tu donación ayuda a mantener CosmoMates gratuito, sin anuncios y sin recoger datos de estudiantes.</p>
+          <p class="support-intro">El pago puede tardar unos minutos en confirmarse en la red.</p>
+          <button type="button" class="btn btn-primary btn-block" data-close="1">Volver a la aventura</button>
+        </div>`);
+      confetti(80);
+      Sound.win();
+    } else if (apoyo === 'cancelado') {
+      toast('Pago cancelado. Puedes seguir jugando: todo el contenido es gratuito.');
+    }
+    try {
+      const limpia = window.location.pathname + (parametros.get('apoyo') ? '' : '');
+      window.history.replaceState({}, '', limpia);
+    } catch (err) {
+      /* ignorar */
+    }
+  }
+
   /* --------------------------------- eventos ------------------------------- */
 
   function cacheElements() {
@@ -988,6 +1128,8 @@
     el.btnSettings = $('#btnSettings');
     el.brandHome = $('#brandHome');
     el.footerYear = $('#footerYear');
+    el.btnApoyar = $('#btnApoyar');
+    el.supportNote = $('#supportNote');
   }
 
   function bindEvents() {
@@ -1013,6 +1155,7 @@
       updateSoundButton();
       if (soundOn) Sound.coin();
     });
+    if (el.btnApoyar) el.btnApoyar.addEventListener('click', () => { Sound.click(); abrirApoyo(); });
     el.btnBadges.addEventListener('click', openBadges);
     el.btnHelp.addEventListener('click', openHelp);
     el.btnSettings.addEventListener('click', openSettings);
@@ -1107,6 +1250,8 @@
     renderHome();
     showScreen('home');
     el.footerYear.textContent = new Date().getFullYear();
+    detectarPagos();
+    revisarRetornoDeApoyo();
     if (state) {
       toast(`¡Hola de nuevo, ${esc(state.player.name)}! Tu aventura te espera.`, null, 3600);
     }
@@ -1119,7 +1264,9 @@
       get state() { return state; },
       get session() { return session; },
       Game: Game,
-      Store: Store
+      Store: Store,
+      get pagos() { return pagos; },
+      abrirApoyo: abrirApoyo
     }
   });
 

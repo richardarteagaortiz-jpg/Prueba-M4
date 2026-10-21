@@ -646,3 +646,32 @@ kbd { padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,.1); bo
   body { background: #fff; color: #000; }
   .card { box-shadow: none; border-color: #ccc; background: #fff; }
 }
+
+/* ------------------------- apoyo / donaciones --------------------------- */
+.footer-support { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center; margin-top: 8px; }
+.support-note { font-size: .72rem; color: var(--muted); }
+
+.support-intro { color: var(--ink-soft); font-size: .92rem; margin-bottom: 14px; }
+.support-note-box {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; border-radius: 13px; margin-bottom: 18px;
+  background: rgba(251, 191, 36, .09); border: 1px solid rgba(251, 191, 36, .3);
+  font-size: .82rem; color: #fde68a;
+}
+.support-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 0 0 16px; }
+.support-amount {
+  padding: 13px 8px; border-radius: 13px; font-weight: 900; font-size: 1.05rem;
+  background: rgba(255,255,255,.05); border: 1.5px solid var(--line-strong); color: var(--ink);
+  transition: transform .15s, border-color .15s, background .15s;
+}
+.support-amount:hover { transform: translateY(-2px); border-color: var(--violet); }
+.support-amount[aria-pressed="true"] { border-color: var(--violet); background: rgba(167, 139, 250, .2); box-shadow: 0 0 0 3px rgba(167,139,250,.16); }
+.support-status { font-size: .85rem; margin-top: 12px; min-height: 1.3em; }
+.support-status.is-error { color: #fecdd3; }
+.support-status.is-info { color: var(--ink-soft); }
+.support-thanks { text-align: center; }
+.support-thanks .support-heart { font-size: 2.6rem; display: block; margin-bottom: 10px; animation: pulse-glow 2.4s ease-in-out infinite; }
+
+@media (max-width: 520px) {
+  .support-amounts { grid-template-columns: repeat(2, 1fr); }
+}

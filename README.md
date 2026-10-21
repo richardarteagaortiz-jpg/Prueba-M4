@@ -18,14 +18,14 @@ Pilota una nave por 8 planetas, resuelve retos matemáticos, aprende con explica
 **Opción 2 — servidor local** (recomendado):
 
 ```bash
-# con Python
-python3 -m http.server 8000
-
-# o con Node
-npx serve .
+python3 -m http.server 8000     # servidor estático simple
+# o
+npm run serve                   # servidor Node: juego + API de donaciones
 ```
 
-Abre <http://localhost:8000>.
+Abre <http://localhost:8000> (o el puerto que indique la consola).
+
+**Opción 3 — con donaciones (opcional):** el proyecto incluye un servidor Node sin dependencias que añade la pasarela de NowPayments. Configura `.env` y ejecuta `npm run serve`. Detalles en [`docs/integracion-pagos.md`](docs/integracion-pagos.md).
 
 1. Escribe tu nombre, elige un avatar y tu edad (10–12 o 13–15 años).
 2. Elige un planeta en el mapa.
@@ -115,10 +115,19 @@ Las preguntas se generan al azar, así que **nunca se acaban**: se pueden repeti
 │   ├── js/store.js          # Guardado en localStorage
 │   ├── js/app.js            # Interfaz, temporizadores, sonido y confeti
 │   └── img/favicon.svg
+├── server/
+│   ├── server.js            # Servidor Node (estático + API de donaciones)
+│   ├── nowpayments.js       # Cliente REST + firma IPN HMAC SHA-512
+│   └── env.js               # Lectura de .env sin dependencias
 ├── tests/
 │   ├── questions.test.js    # Valida miles de preguntas generadas
-│   └── game.test.js         # Pruebas de la lógica del juego
-└── docs/guia-docente.md     # Uso en el aula y objetivos de aprendizaje
+│   ├── game.test.js         # Pruebas de la lógica del juego
+│   └── payments.test.js     # Pasarela contra un mock de NowPayments
+├── .env.example             # Plantilla de configuración (sin secretos)
+└── docs/
+    ├── guia-docente.md
+    ├── integracion-pagos.md
+    └── analisis-nowpayments-mcp.md
 ```
 
 El juego usa **JavaScript clásico (sin frameworks ni build)**. Se puede abrir `index.html` directamente o publicarlo en cualquier hosting estático.
@@ -144,6 +153,18 @@ node tests/game.test.js
 
 - `questions.test.js` genera **10.200 preguntas** y comprueba que todas tengan 4 opciones únicas, exactamente una correcta, sin valores inválidos y con explicación.
 - `game.test.js` cubre estrellas, recompensas, comodines, reto diario, desbloqueo del núcleo, niveles de XP y persistencia.
+- `payments.test.js` prueba la pasarela contra un **mock local** de NowPayments: importes validados en servidor, firma IPN válida/ inválida, bloqueo de `.env` y modo gratuito sin claves.
+
+### Donaciones (opcional)
+
+El juego no necesita backend para funcionar. Solo si quieres aceptar donaciones:
+
+```bash
+cp .env.example .env   # rellena NOWPAYMENTS_API_KEY y NOWPAYMENTS_IPN_SECRET
+npm run serve
+```
+
+Sin claves configuradas, el botón "Apoyar el proyecto" no aparece y el juego sigue igual. La clave **nunca** llega al navegador.
 
 ---
 
@@ -186,6 +207,7 @@ const porcentajes = [
 - [`docs/guia-docente.md`](docs/guia-docente.md): objetivos de aprendizaje por planeta, ideas para clase, criterios de evaluación y accesibilidad.
 - [`docs/integracion-pagos.md`](docs/integracion-pagos.md): cómo añadir donaciones o una versión premium **sin exponer credenciales** y protegiendo a los menores.
 - [`docs/analisis-nowpayments-mcp.md`](docs/analisis-nowpayments-mcp.md): análisis del servidor MCP de NowPayments y por qué **no** se usa en este proyecto.
+- [`docs/integracion-pagos.md`](docs/integracion-pagos.md): donaciones voluntarias con NowPayments ya implementadas (servidor, webhook firmado y seguridad).
 
 > 🔐 Este proyecto no contiene claves ni secretos. Si en el futuro se integra una pasarela de pagos, la clave debe vivir en el backend (variable de entorno) y `.env` ya está excluido en `.gitignore`.
 

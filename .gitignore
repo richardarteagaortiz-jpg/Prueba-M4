@@ -9,3 +9,5 @@ Thumbs.db
 !.env.example
 *.pem
 secrets/
+data/
+!data/.gitkeep
