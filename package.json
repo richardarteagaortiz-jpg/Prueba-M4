@@ -1,0 +1,25 @@
+{
+  "name": "cosmomates",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Videojuego educativo de matemáticas para niños y niñas de 10 a 15 años.",
+  "keywords": [
+    "matemáticas",
+    "educación",
+    "juego",
+    "niños",
+    "fracciones",
+    "álgebra",
+    "aprendizaje"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "test": "node tests/questions.test.js && node tests/game.test.js && node tests/payments.test.js",
+    "start": "python3 -m http.server 8000",
+    "serve": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

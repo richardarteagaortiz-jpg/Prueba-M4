@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CosmoMates · Aventura matemática</title>
+  <meta name="description" content="Videojuego educativo de matemáticas para niños y niñas de 10 a 15 años. Explora planetas, resuelve retos y aprende fracciones, álgebra, geometría y más.">
+  <meta name="theme-color" content="#070b1f">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="CosmoMates · Aventura matemática">
+  <meta property="og:description" content="Videojuego educativo de matemáticas para niños y niñas de 10 a 15 años: 8 planetas, retos aleatorios y explicaciones paso a paso.">
+  <meta property="og:locale" content="es_ES">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+  <div class="space-bg" aria-hidden="true">
+    <div class="nebula nebula--a"></div>
+    <div class="nebula nebula--b"></div>
+    <div class="nebula nebula--c"></div>
+    <div class="stars stars--far"></div>
+    <div class="stars stars--near"></div>
+    <div class="shooting-star"></div>
+  </div>
+
+  <a class="skip-link" href="#app">Saltar al contenido</a>
+
+  <header class="topbar">
+    <a class="brand" href="#inicio" id="brandHome" aria-label="CosmoMates, ir al inicio">
+      <span class="brand-logo" aria-hidden="true">
+        <span class="orbit orbit--1"></span>
+        <span class="orbit orbit--2"></span>
+        <span class="planet-dot"></span>
+      </span>
+      <span class="brand-text">
+        <strong>CosmoMates</strong>
+        <small>aventura matemática</small>
+      </span>
+    </a>
+
+    <nav class="topbar-actions" aria-label="Acciones">
+      <button type="button" class="icon-btn" id="btnSound" aria-pressed="true" title="Activar o desactivar sonido">
+        <span aria-hidden="true" id="soundIcon">🔊</span><span class="sr-only">Sonido</span>
+      </button>
+      <button type="button" class="icon-btn" id="btnBadges" title="Ver mis logros">
+        <span aria-hidden="true">🏅</span><span class="icon-btn-label">Logros</span>
+      </button>
+      <button type="button" class="icon-btn" id="btnHelp" title="Cómo jugar">
+        <span aria-hidden="true">❓</span><span class="icon-btn-label">Cómo jugar</span>
+      </button>
+      <button type="button" class="icon-btn" id="btnSettings" title="Ajustes">
+        <span aria-hidden="true">⚙️</span><span class="sr-only">Ajustes</span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- ============================= INICIO ============================= -->
+    <section class="screen" id="screen-home" aria-labelledby="homeTitle">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Misión: dominar las matemáticas</p>
+          <h1 id="homeTitle">Tu aventura<br><span class="gradient-text">empieza en el espacio</span></h1>
+          <p class="hero-lead">
+            Pilota tu nave por 8 planetas, resuelve retos de números, fracciones, álgebra y geometría,
+            y gana estrellas. Cada respuesta enseña algo nuevo.
+          </p>
+
+          <ul class="hero-chips">
+            <li>🎯 8 planetas</li>
+            <li>🧠 +2.000 retos</li>
+            <li>⚡ Sin anuncios</li>
+            <li>💾 Guarda tu progreso</li>
+          </ul>
+
+          <div class="profile-actions" id="profileActions" hidden>
+            <button type="button" class="btn btn-primary btn-lg" id="btnContinue">
+              <span aria-hidden="true">🚀</span> Continuar aventura
+            </button>
+            <button type="button" class="btn btn-ghost" id="btnNewProfile">Nuevo explorador</button>
+          </div>
+
+          <form class="card start-card" id="startForm" novalidate hidden>
+            <h2>Prepara tu tripulación</h2>
+
+            <label class="field">
+              <span class="field-label">Tu nombre de explorador</span>
+              <input id="playerName" name="playerName" type="text" maxlength="16" autocomplete="nickname"
+                     placeholder="Ej.: Luna" aria-describedby="nameHint" required>
+              <span class="field-hint" id="nameHint">Entre 2 y 16 letras. Puedes cambiarlo después.</span>
+            </label>
+
+            <fieldset class="field">
+              <legend class="field-label">Elige tu avatar</legend>
+              <div class="avatar-grid" id="avatarGrid" role="radiogroup" aria-label="Avatar"></div>
+            </fieldset>
+
+            <fieldset class="field">
+              <legend class="field-label">Tu edad</legend>
+              <div class="age-grid" id="ageGrid" role="radiogroup" aria-label="Edad">
+                <label class="age-card">
+                  <input type="radio" name="ageGroup" value="1" checked>
+                  <span class="age-emoji" aria-hidden="true">🌱</span>
+                  <span class="age-title">10 a 12 años</span>
+                  <span class="age-sub">Primaria · niveles base</span>
+                </label>
+                <label class="age-card">
+                  <input type="radio" name="ageGroup" value="2">
+                  <span class="age-emoji" aria-hidden="true">🚀</span>
+                  <span class="age-title">13 a 15 años</span>
+                  <span class="age-sub">Secundaria · más desafío</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <p class="form-error" id="formError" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">
+              <span aria-hidden="true">✨</span> Iniciar la aventura
+            </button>
+            <p class="privacy-note">Sin registro y sin anuncios. Tu progreso se guarda solo en este dispositivo.</p>
+          </form>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="holo-planet">
+            <div class="holo-ring"></div>
+            <div class="holo-core">π</div>
+            <div class="holo-moon">✚</div>
+            <div class="holo-moon holo-moon--2">÷</div>
+          </div>
+          <div class="float-card float-card--1"><span>🍕</span> 3/4 + 1/4 = 1</div>
+          <div class="float-card float-card--2"><span>📐</span> A = b × h</div>
+          <div class="float-card float-card--3"><span>🔥</span> ¡Racha de 5!</div>
+        </div>
+      </div>
+
+      <section class="how-strip" aria-labelledby="howTitle">
+        <h2 id="howTitle" class="sr-only">Cómo funciona</h2>
+        <article class="how-card"><span aria-hidden="true">🪐</span><h3>Elige un planeta</h3><p>Cada planeta entrena un tema: fracciones, potencias, álgebra…</p></article>
+        <article class="how-card"><span aria-hidden="true">🧩</span><h3>Resuelve retos</h3><p>10 preguntas con 4 opciones, explicación y comodines de ayuda.</p></article>
+        <article class="how-card"><span aria-hidden="true">⭐</span><h3>Gana estrellas</h3><p>Junta estrellas, sube de nivel y desbloquea el Núcleo Final.</p></article>
+      </section>
+    </section>
+
+    <!-- ============================== MAPA ============================== -->
+    <section class="screen" id="screen-map" aria-labelledby="mapTitle" hidden>
+      <div class="hud card">
+        <div class="hud-player">
+          <span class="hud-avatar" id="hudAvatar" aria-hidden="true">🧑‍🚀</span>
+          <div>
+            <h1 class="hud-name" id="mapTitle">Explorador</h1>
+            <p class="hud-level"><span id="hudLevel">Nivel 1</span> · <span id="hudAge">10–12 años</span></p>
+          </div>
+        </div>
+        <div class="hud-progress">
+          <div class="xp-line"><span>Progreso del nivel</span><strong id="hudXp">0 / 300 XP</strong></div>
+          <div class="bar"><i id="hudXpBar" style="width:0%"></i></div>
+        </div>
+        <dl class="hud-stats">
+          <div><dt>Estrellas</dt><dd id="hudStars">0</dd></div>
+          <div><dt>Monedas</dt><dd id="hudCoins">0</dd></div>
+          <div><dt>Aciertos</dt><dd id="hudAccuracy">—</dd></div>
+        </dl>
+      </div>
+
+      <div class="map-toolbar">
+        <div>
+          <h2 class="section-title">Mapa de la galaxia</h2>
+          <p class="section-sub">Elige un planeta y empieza por la órbita 1.</p>
+        </div>
+        <div class="map-actions">
+          <button type="button" class="btn btn-accent" id="btnDaily"><span aria-hidden="true">🎁</span> Reto diario</button>
+          <button type="button" class="btn btn-ghost" id="btnBlitz"><span aria-hidden="true">⏱️</span> Contrarreloj</button>
+        </div>
+      </div>
+
+      <div class="planets-grid" id="planetsGrid"></div>
+
+      <div class="boss-wrap" id="bossWrap"></div>
+    </section>
+
+    <!-- ============================== QUIZ ============================== -->
+    <section class="screen" id="screen-quiz" aria-labelledby="quizTopic" hidden>
+      <div class="quiz-shell">
+        <div class="quiz-top">
+          <button type="button" class="icon-btn" id="btnQuit" title="Salir de la misión">
+            <span aria-hidden="true">←</span><span class="sr-only">Salir de la misión</span>
+          </button>
+          <div class="quiz-progress">
+            <div class="progress-head">
+              <span id="quizTopic">Misión</span>
+              <span id="quizCount">1 de 10</span>
+            </div>
+            <div class="bar bar--quiz"><i id="quizBar" style="width:0%"></i></div>
+          </div>
+          <div class="quiz-total"><span aria-hidden="true">✨</span> <strong id="quizScore">0</strong> pts</div>
+        </div>
+
+        <div class="quiz-status">
+          <span class="topic-pill" id="quizTopicPill">🔢 Números</span>
+          <span class="timer-pill" id="quizTimer" hidden><span aria-hidden="true">⏱️</span> <strong id="timerValue">20</strong>s</span>
+          <span class="streak-pill" id="quizStreak" hidden><span aria-hidden="true">🔥</span> Racha <strong id="streakValue">0</strong></span>
+          <span class="mode-pill" id="quizMode">Misión</span>
+        </div>
+
+        <article class="question-card card" id="questionCard">
+          <p class="question-kicker" id="questionKicker">Pregunta 1</p>
+          <h2 class="question-text" id="questionText">Cargando reto…</h2>
+          <div class="options" id="options" role="group" aria-labelledby="questionText"></div>
+          <p class="keyboard-hint">Atajos: teclas <kbd>1</kbd>–<kbd>4</kbd> para responder, <kbd>Enter</kbd> para continuar.</p>
+        </article>
+
+        <div class="feedback card" id="feedback" role="status" aria-live="polite" hidden>
+          <div class="feedback-head">
+            <span class="feedback-icon" id="feedbackIcon" aria-hidden="true">✅</span>
+            <h3 id="feedbackTitle">¡Correcto!</h3>
+            <span class="feedback-points" id="feedbackPoints"></span>
+          </div>
+          <p class="feedback-text" id="feedbackText"></p>
+          <button type="button" class="btn btn-primary" id="btnNext">Siguiente <span aria-hidden="true">→</span></button>
+        </div>
+
+        <div class="powerups" id="powerups">
+          <button type="button" class="powerup" data-power="fifty">
+            <span aria-hidden="true">✂️</span> Descartar 2 <span class="powerup-count" id="countFifty">2</span>
+          </button>
+          <button type="button" class="powerup" data-power="time">
+            <span aria-hidden="true">⏱️</span> +10 segundos <span class="powerup-count" id="countTime">1</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ RESULTADOS =========================== -->
+    <section class="screen" id="screen-results" aria-labelledby="resultsTitle" hidden>
+      <div class="results card" id="resultsCard">
+        <p class="eyebrow" id="resultsEyebrow">Misión completada</p>
+        <h2 id="resultsTitle">¡Buen trabajo!</h2>
+        <div class="stars-result" id="resultsStars" role="img" aria-label="Estrellas obtenidas"></div>
+        <p class="results-message" id="resultsMessage"></p>
+
+        <dl class="results-stats">
+          <div><dt>Aciertos</dt><dd id="resCorrect">0</dd></div>
+          <div><dt>Precisión</dt><dd id="resAccuracy">0%</dd></div>
+          <div><dt>Puntos</dt><dd id="resScore">0</dd></div>
+          <div><dt>Monedas</dt><dd id="resCoins">0</dd></div>
+        </dl>
+
+        <div class="badges-earned" id="resBadges" hidden>
+          <h3>¡Nuevos logros!</h3>
+          <div class="badge-row" id="resBadgeRow"></div>
+        </div>
+
+        <div class="results-actions">
+          <button type="button" class="btn btn-ghost" id="btnBackMap">Volver al mapa</button>
+          <button type="button" class="btn btn-primary" id="btnRetry">Repetir</button>
+          <button type="button" class="btn btn-accent" id="btnNextLevel" hidden>Siguiente órbita <span aria-hidden="true">→</span></button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== MODALES ============================= -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-close="1"></div>
+    <div class="modal-card card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button type="button" class="modal-close" data-close="1" aria-label="Cerrar">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+  <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+
+  <footer class="site-footer">
+    <p>CosmoMates · Recurso educativo abierto para aprender matemáticas jugando.</p>
+    <p class="footer-sub">Hecho para aulas y casas · <span id="footerYear">2026</span></p>
+    <p class="footer-support">
+      <button type="button" class="btn btn-ghost btn-sm" id="btnApoyar" hidden>
+        <span aria-hidden="true">💜</span> Apoyar el proyecto
+      </button>
+      <span class="support-note" id="supportNote" hidden>Donación voluntaria · solo personas adultas</span>
+    </p>
+  </footer>
+
+  <script src="assets/js/questions.js"></script>
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/game.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

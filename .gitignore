@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+Thumbs.db
+*.log
+
+# Nunca subir credenciales al repositorio
+.env
+.env.*
+!.env.example
+*.pem
+secrets/
+data/
+!data/.gitkeep
