@@ -185,6 +185,7 @@ const porcentajes = [
 
 - [`docs/guia-docente.md`](docs/guia-docente.md): objetivos de aprendizaje por planeta, ideas para clase, criterios de evaluación y accesibilidad.
 - [`docs/integracion-pagos.md`](docs/integracion-pagos.md): cómo añadir donaciones o una versión premium **sin exponer credenciales** y protegiendo a los menores.
+- [`docs/analisis-nowpayments-mcp.md`](docs/analisis-nowpayments-mcp.md): análisis del servidor MCP de NowPayments y por qué **no** se usa en este proyecto.
 
 > 🔐 Este proyecto no contiene claves ni secretos. Si en el futuro se integra una pasarela de pagos, la clave debe vivir en el backend (variable de entorno) y `.env` ya está excluido en `.gitignore`.
 
